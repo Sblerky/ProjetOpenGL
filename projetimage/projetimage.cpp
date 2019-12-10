@@ -24,6 +24,7 @@
 using namespace glm;
 using namespace std;
 
+#define M_PI 3.1415
 #define MAXMERID 20
 #define BUFFER_OFFSET(i) ((unsigned int *)NULL + (i))
 
