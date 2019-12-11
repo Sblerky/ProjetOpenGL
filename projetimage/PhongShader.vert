@@ -2,6 +2,7 @@
 #define M_PI 3.1415926535897932384626433832795
 
 uniform mat4 MVP;
+uniform int choice;
 
 out float theta;
 out float alpha;
@@ -16,15 +17,15 @@ out vec3 fragPosition;
 out vec3 newPosition;
 
 
-void compressionx(vec3 vecteur,float borneinf, float bornesup) 
-{ 
+void compressionx(vec3 vecteur,float borneinf, float bornesup)
+{
     float Rayon=bornesup-borneinf;
      if (vecteur.x>borneinf){
         if(vecteur.x<bornesup){
            newPosition.x=1.-(vecteur.x-borneinf)/(2.*Rayon);
          }
          else{
-              newPosition.x= 1./2.*vecteur.x;                
+              newPosition.x= 1./2.*vecteur.x;
          }
          newPosition.y=vecteur.y;
         newPosition.z=vecteur.z;
@@ -32,11 +33,11 @@ void compressionx(vec3 vecteur,float borneinf, float bornesup)
      else{
          newPosition=vecteur;
      }
-    
+
 }
 
-void compressionx_yz(vec3 vecteur,float borneinf, float bornesup) 
-{ 
+void compressionx_yz(vec3 vecteur,float borneinf, float bornesup)
+{
     float Rayon=bornesup-borneinf;
      if (vecteur.x>borneinf){
         if(vecteur.x<bornesup){
@@ -45,26 +46,26 @@ void compressionx_yz(vec3 vecteur,float borneinf, float bornesup)
          }
          else{
               newPosition.y= 1./2.*vecteur.y;
-              newPosition.z= 1./2.*vecteur.z;                 
+              newPosition.z= 1./2.*vecteur.z;
          }
          newPosition.x=vecteur.x;
      }
      else{
          newPosition=vecteur;
      }
-    
+
 }
 
 
-void compressiony(vec3 vecteur,float borneinf, float bornesup) 
-{ 
+void compressiony(vec3 vecteur,float borneinf, float bornesup)
+{
     float Rayon=bornesup-borneinf;
      if (vecteur.y>borneinf){
         if(vecteur.y<bornesup){
            newPosition.y=1.-(vecteur.y-borneinf)/(2.*Rayon);
          }
          else{
-              newPosition.y= 1./2.*vecteur.y;                
+              newPosition.y= 1./2.*vecteur.y;
          }
         newPosition.x=vecteur.x;
         newPosition.z=vecteur.z;
@@ -74,8 +75,8 @@ void compressiony(vec3 vecteur,float borneinf, float bornesup)
      }
 }
 
-void compressiony_xz(vec3 vecteur,float borneinf, float bornesup) 
-{ 
+void compressiony_xz(vec3 vecteur,float borneinf, float bornesup)
+{
     float Rayon=bornesup-borneinf;
      if (vecteur.y>borneinf){
         if(vecteur.y<bornesup){
@@ -84,7 +85,7 @@ void compressiony_xz(vec3 vecteur,float borneinf, float bornesup)
          }
          else{
               newPosition.z= 1./2.*vecteur.z;
-              newPosition.x= 1./2.*vecteur.x;                
+              newPosition.x= 1./2.*vecteur.x;
          }
         newPosition.y=vecteur.y;
         }
@@ -94,15 +95,15 @@ void compressiony_xz(vec3 vecteur,float borneinf, float bornesup)
 }
 
 
-void compressionz(vec3 vecteur,float borneinf, float bornesup) 
-{ 
+void compressionz(vec3 vecteur,float borneinf, float bornesup)
+{
     float Rayon=bornesup-borneinf;
      if (vecteur.z>borneinf){
         if(vecteur.z<bornesup){
            newPosition.z=1.-(vecteur.z-borneinf)/(2.*Rayon);
          }
          else{
-              newPosition.z= 1./2.*vecteur.z;                
+              newPosition.z= 1./2.*vecteur.z;
          }
         newPosition.x=vecteur.x;
         newPosition.y=vecteur.y;
@@ -110,11 +111,11 @@ void compressionz(vec3 vecteur,float borneinf, float bornesup)
      else{
          newPosition=vecteur;
      }
-    
+
 }
 
-void compressionz_xy(vec3 vecteur,float borneinf, float bornesup) 
-{ 
+void compressionz_xy(vec3 vecteur,float borneinf, float bornesup)
+{
     float Rayon=bornesup-borneinf;
      if (vecteur.z>borneinf){
         if(vecteur.z<bornesup){
@@ -123,14 +124,14 @@ void compressionz_xy(vec3 vecteur,float borneinf, float bornesup)
          }
          else{
               newPosition.x= 1./2.*vecteur.x;
-              newPosition.y= 1./2.*vecteur.y;                 
+              newPosition.y= 1./2.*vecteur.y;
          }
         newPosition.z=vecteur.z;
      }
      else{
          newPosition=vecteur;
      }
-    
+
 }
 
 void compressionxtremx (vec3 vecteur,float Max)
@@ -199,7 +200,7 @@ void rotationdiffy2(vec3 vecteur,float anglerot)
                     -sin(theta),0.0,cos(theta)
                     );
     newPosition= rot*vecteur;
-     
+
 }
 
 vec3 rotationdiffy3(vec3 vecteur,float anglerot)
@@ -210,11 +211,11 @@ vec3 rotationdiffy3(vec3 vecteur,float anglerot)
                     -sin(theta),0.0,cos(theta)
                     );
     return rot*vecteur;
-    
+
 }
 
 void rotationdiffy(vec3 vecteur, int borneinf,int bornesup,float anglerot){
-    
+
     float Rayon=bornesup-borneinf;
     if (vecteur.y>borneinf){
         if(vecteur.y<bornesup){
@@ -236,7 +237,7 @@ void rotationdiffx2(vec3 vecteur,float anglerot)
               0.0,sin(theta),cos(theta)
              );
     newPosition= rot*vecteur;
-     
+
 }
 
 vec3 rotationdiffx3(vec3 vecteur,float anglerot)
@@ -247,11 +248,11 @@ vec3 rotationdiffx3(vec3 vecteur,float anglerot)
               0.0,sin(theta),cos(theta)
              );
     return rot*vecteur;
-     
+
 }
 
 void rotationdiffx(vec3 vecteur, int borneinf,int bornesup,float anglerot){
-    
+
     float Rayon=bornesup-borneinf;
     if (vecteur.x>borneinf){
         if(vecteur.x<bornesup){
@@ -273,7 +274,7 @@ void rotationdiffz2(vec3 vecteur,float anglerot)
                     0.0,0.0,1.0
                     );
     newPosition= rot*vecteur;
-     
+
 }
 
 vec3 rotationdiffz3(vec3 vecteur,float anglerot)
@@ -284,11 +285,11 @@ vec3 rotationdiffz3(vec3 vecteur,float anglerot)
                     0.0,0.0,1.0
                     );
     return rot*vecteur;
-     
+
 }
 
 void rotationdiffz(vec3 vecteur, int borneinf,int bornesup,float anglerot){
-    
+
     float Rayon=bornesup-borneinf;
     if (vecteur.z>borneinf){
         if(vecteur.z<bornesup){
@@ -306,13 +307,13 @@ void rotationdiffz(vec3 vecteur, int borneinf,int bornesup,float anglerot){
 void vortexz(vec3 vecteur,float anglerot)
 {
     theta=anglerot*vecteur.z/8;
-    alpha=theta*exp(-1.*(vecteur.x*vecteur.x+vecteur.y*vecteur.y));           
+    alpha=theta*exp(-1.*(vecteur.x*vecteur.x+vecteur.y*vecteur.y));
     rot=mat3(cos(alpha),-sin(alpha),0.0,
                     sin(alpha),cos(alpha),0.0,
                     0.0,0.0,1.0
                     );
     newPosition= (rot*vecteur);
-     
+
 }
 
 void vortexx(vec3 vecteur,float anglerot)
@@ -324,7 +325,7 @@ void vortexx(vec3 vecteur,float anglerot)
               0.0,sin(alpha),cos(alpha)
              );
     newPosition= (rot*vecteur);
-     
+
 }
 
 void vortexy(vec3 vecteur,float anglerot)
@@ -336,7 +337,7 @@ void vortexy(vec3 vecteur,float anglerot)
                     -sin(theta),0.0,cos(theta)
                     );
     newPosition= rot*vecteur;
-}     
+}
 
 
 void torvexz(vec3 vecteur,float anglerot)
@@ -348,7 +349,7 @@ void torvexz(vec3 vecteur,float anglerot)
                     0.0,0.0,1.0
                     );
     newPosition= (rot*vecteur);
-     
+
 }
 
 void torvexx(vec3 vecteur,float anglerot)
@@ -360,7 +361,7 @@ void torvexx(vec3 vecteur,float anglerot)
               0.0,sin(alpha),cos(alpha)
              );
     newPosition= (rot*vecteur);
-     
+
 }
 
 void torvexy(vec3 vecteur,float anglerot)
@@ -372,20 +373,20 @@ void torvexy(vec3 vecteur,float anglerot)
                     -sin(theta),0.0,cos(theta)
                     );
     newPosition= rot*vecteur;
-}  
+}
 
-void pliagex(vec3 vecteur,int borneinf,int bornesup,float anglerot) 
+void pliagex(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 {
-    
+
     float Rayon=(bornesup-borneinf);
     float trueRayon = (bornesup-borneinf)/anglerot;
     tmp=vec3(0,Rayon,Rayon);
     if (vecteur.z>borneinf){
         if(vecteur.z<bornesup){
 
-            quasirot=vecteur.z-borneinf; // ( z - z0) 
-           
-            alpha=( (quasirot*anglerot) /Rayon ); // theta * (z-z0)/(z1-z0) 
+            quasirot=vecteur.z-borneinf; // ( z - z0)
+
+            alpha=( (quasirot*anglerot) /Rayon ); // theta * (z-z0)/(z1-z0)
 
             rot=mat3(1.0,0.0,0.0,
               0.0,cos(alpha),-sin (alpha),
@@ -400,7 +401,7 @@ void pliagex(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
             //rotation
 			newPosition=rot*newPosition;
-            
+
             newPosition.z = newPosition.z+borneinf;
 			newPosition.y = newPosition.y+borneinf+trueRayon;
          }
@@ -419,14 +420,14 @@ void pliagex(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
             //rotation
 			newPosition=rot*newPosition;
-            
+
             newPosition.z = newPosition.z+borneinf;
 			newPosition.y = newPosition.y+borneinf+trueRayon;
         }
     }
     else{
         newPosition=vecteur;
-    }    
+    }
 }
 
 
@@ -439,18 +440,18 @@ void pliagex(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
 
 
-void pliagey(vec3 vecteur,int borneinf,int bornesup,float anglerot) 
+void pliagey(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 {
-    
+
     float Rayon=(bornesup-borneinf);
     float trueRayon = (bornesup-borneinf)/anglerot;
     tmp=vec3(0,Rayon,Rayon);
     if (vecteur.x>borneinf){
         if(vecteur.x<bornesup){
 
-            quasirot=vecteur.x-borneinf; // ( x - z0) 
-           
-            alpha=( (quasirot*anglerot) /Rayon ); // theta * (z-z0)/(z1-z0) 
+            quasirot=vecteur.x-borneinf; // ( x - z0)
+
+            alpha=( (quasirot*anglerot) /Rayon ); // theta * (z-z0)/(z1-z0)
 
             rot=mat3(cos(alpha),0.0,sin(alpha),
                     0.0,1.0,0.0,
@@ -465,7 +466,7 @@ void pliagey(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
             //rotation
 			newPosition=rot*newPosition;
-            
+
             newPosition.x = newPosition.x+borneinf;
 			newPosition.z = newPosition.z+borneinf+trueRayon;
          }
@@ -484,14 +485,14 @@ void pliagey(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
             //rotation
 			newPosition=rot*newPosition;
-            
+
             newPosition.x = newPosition.x+borneinf;
 			newPosition.z = newPosition.z+borneinf+trueRayon;
         }
     }
     else{
         newPosition=vecteur;
-    }    
+    }
 }
 
 
@@ -500,18 +501,18 @@ void pliagey(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
 
 
-void pliagez(vec3 vecteur,int borneinf,int bornesup,float anglerot) 
+void pliagez(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 {
-    
+
     float Rayon=(bornesup-borneinf);
     float trueRayon = (bornesup-borneinf)/anglerot;
     tmp=vec3(0,Rayon,Rayon);
     if (vecteur.x>borneinf){
         if(vecteur.x<bornesup){
 
-            quasirot=vecteur.x-borneinf; // ( x - z0) 
-           
-            alpha=( (quasirot*anglerot) /Rayon ); // theta * (z-z0)/(z1-z0) 
+            quasirot=vecteur.x-borneinf; // ( x - z0)
+
+            alpha=( (quasirot*anglerot) /Rayon ); // theta * (z-z0)/(z1-z0)
 
             rot=mat3(cos(alpha),-sin(alpha),0.0,
                     sin(alpha),cos(alpha),0.0,
@@ -526,7 +527,7 @@ void pliagez(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
             //rotation
 			newPosition=rot*newPosition;
-            
+
             newPosition.x = newPosition.x+borneinf;
 			newPosition.y = newPosition.y+borneinf+trueRayon;
          }
@@ -545,14 +546,14 @@ void pliagez(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
             //rotation
 			newPosition=rot*newPosition;
-            
+
             newPosition.x = newPosition.x+borneinf;
 			newPosition.y = newPosition.y+borneinf+trueRayon;
         }
     }
     else{
         newPosition=vecteur;
-    }    
+    }
 }
 
 
@@ -577,9 +578,9 @@ void main(){
     //decompressionxtrem(newPosition,4);
 
     //pliagex(position,-1,2,M_PI/4);
-
-    pliagey(position,-1,2,M_PI/4);
-
+    if(choice==0){pliagey(position,-1,2,M_PI/4);}
+    //pliagey(position,-1,2,M_PI/4);
+    if(choice>0){pliagez(position,-1,2,M_PI/4);}
     //pliagez(position,-1,2,M_PI/4);
 
     //rotationdiffx(position,0,4,M_PI/3);
@@ -587,11 +588,9 @@ void main(){
 
 	gl_Position = MVP*vec4(newPosition, 1.0);
 
-    
+
 
 	fragPosition = newPosition;
-	
+
 
 }
-
-

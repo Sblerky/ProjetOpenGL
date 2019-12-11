@@ -29,14 +29,14 @@ using namespace std;
 #define BUFFER_OFFSET(i) ((unsigned int *)NULL + (i))
 
 //hyperbole
-GLfloat sommets[2*MAXMERID*3+6] ; // x 3 coordonnées 
+GLfloat sommets[2*MAXMERID*3+6] ; // x 3 coordonnées
 GLuint indices[MAXMERID*12]; // x6 car pour chaque face quadrangulaire on a 6 indices (2 triangles=2x 3 indices)
 GLfloat normales[2*MAXMERID*3];
 double theta=2*M_PI/double(MAXMERID);
 double alpha=M_PI/1.2;
 
 //tore
-GLfloat sommetstore[MAXMERID*3*MAXMERID]; 
+GLfloat sommetstore[MAXMERID*3*MAXMERID];
 GLuint indicestore[4*MAXMERID*MAXMERID];
 double rayon1=2.0;
 double rayon2=1.0;
@@ -70,8 +70,9 @@ float mouseX, mouseY;
 float cameraAngleX;
 float cameraAngleY;
 float cameraDistance=0.;
+int choice=0;
 
-// variables Handle d'opengl 
+// variables Handle d'opengl
 //--------------------------
 GLuint programID;   // handle pour le shader
 GLuint MatrixIDMVP,MatrixIDView,MatrixIDModel,MatrixIDPerspective;    // handle pour la matrice MVP
@@ -93,76 +94,8 @@ glm::mat4 Model, View, Projection;    // Matrices constituant MVP
 int screenHeight = 500;
 int screenWidth = 500;
 
-//-------------------------
-void createHyper()
-{
-	/* METTRE ICI LA CONSTITUTION DU TABLEAU DES SOMMETS, 
-			DES NORMALES, 
-			DES COULEURS 
-			ET DU TABLEAU DES INDICES */
-    for(int i=0;i<MAXMERID;i++){
-        sommets[3*i]=2*sin(i*theta);
-        sommets[3*i+1]=-2.0;
-        sommets[3*i+2]=2*cos(i*theta);
-        sommets[3*i+3*MAXMERID]=2*sin(i*theta+alpha);
-        sommets[3*i+3*MAXMERID+1]=2.0;
-        sommets[3*i+3*MAXMERID+2]=2*cos(i*theta+alpha);
-    }
-    sommets[6*MAXMERID]=0;
-    sommets[6*MAXMERID+1]=-2;
-    sommets[6*MAXMERID+2]=0;
-    sommets[6*MAXMERID+3]=0;
-    sommets[6*MAXMERID+4]=2;
-    sommets[6*MAXMERID+5]=0;
-
-            
 
 
-    for(int i=0;i<MAXMERID;i++){
-                //corps
-                indices[i*6]=(unsigned int) i;
-                indices[i*6+1]=(unsigned int) (i+1)%(MAXMERID);
-                indices[i*6+2]=(unsigned int) i+MAXMERID;
-                indices[i*6+3]=(unsigned int) (i+1)%(MAXMERID);
-                indices[i*6+4]=(unsigned int) (i+1)%(MAXMERID)+MAXMERID;
-                indices[i*6+5]=(unsigned int) i+MAXMERID;
-                //dessus / dessous
-                indices[6*MAXMERID+i*3]=(unsigned int)i;
-                indices[6*MAXMERID+i*3+1]=(unsigned int)2*MAXMERID;
-                indices[6*MAXMERID+i*3+2]=(unsigned int)(i+1)%MAXMERID;
-                indices[9*MAXMERID+i*3]=(unsigned int)i+MAXMERID;           
-                indices[9*MAXMERID+i*3+2]=(unsigned int)(i+1)%MAXMERID+MAXMERID;
-                indices[9*MAXMERID+i*3+1]=(unsigned int)2*MAXMERID+1;
-    }
-}
-
-void createtore()
-{
-	/* METTRE ICI LA CONSTITUTION DU TABLEAU DES SOMMETS, 
-			DES NORMALES, 
-			DES COULEURS 
-			ET DU TABLEAU DES INDICES */
-    for(int j=0;j<MAXMERID;j++) {
-        for(int i=0;i<MAXMERID;i++){
-            sommetstore[3*(i*MAXMERID+j)]=(rayon1 + rayon2*cos(j*theta))*cos(i*zeta);
-            sommetstore[3*(i*MAXMERID+j)+1]=(rayon1 + rayon2*cos(j*theta))*sin(i*zeta);
-            sommetstore[3*(i*MAXMERID+j)+2]=rayon2*sin(j*theta);
-        }
-    }       
-
-
-
-    for(int i=0;i<MAXMERID;i++){
-        for (int j=0;j<MAXMERID;j++){
-                //corps
-                indicestore[4*(i*MAXMERID+j)]=(unsigned int) i*MAXMERID+j;
-                indicestore[4*(i*MAXMERID+j)+1]=(unsigned int) ((i+1)%MAXMERID)*MAXMERID+j;
-                indicestore[4*(i*MAXMERID+j)+2]=(unsigned int) (((i+1)%MAXMERID)*MAXMERID)+(j+1)%MAXMERID;
-                indicestore[4*(i*MAXMERID+j)+3]=(unsigned int) i*MAXMERID+(j+1)%MAXMERID;
-
-        }
-    }        
-}
 
 /*
 ********************************
@@ -172,9 +105,9 @@ DEBUT PROJET
 
 void createaccordeon()
 {
-	/* METTRE ICI LA CONSTITUTION DU TABLEAU DES SOMMETS, 
-			DES NORMALES, 
-			DES COULEURS 
+	/* METTRE ICI LA CONSTITUTION DU TABLEAU DES SOMMETS,
+			DES NORMALES,
+			DES COULEURS
 			ET DU TABLEAU DES INDICES */
     for(int j=0;j<8;j++) {
         for(int i=0;i<8;i++){
@@ -184,7 +117,7 @@ void createaccordeon()
                 sommetscube[3*(i*8*8+j*8+z)+2]=z-4;
             }
         }
-    }       
+    }
 
 
 
@@ -197,11 +130,11 @@ void createaccordeon()
                 indicescube[4*(i*8*8+j*8+z)+2]=(unsigned int) i*8*8+((j+1))*8+(z+1);
                 indicescube[4*(i*8*8+j*8+z)+3]=(unsigned int) i*8*8+((j+1))*8+z;
 
-                
+
             }
 
         }
-    }        
+    }
 }
 
 
@@ -219,10 +152,10 @@ void initOpenGL(void)
 {
   glCullFace (GL_BACK); // on spécifie queil faut éliminer les face arriere
   //glEnable(GL_CULL_FACE); // on active l'élimination des faces qui par défaut n'est pas active
-  glEnable(GL_DEPTH_TEST); 
+  glEnable(GL_DEPTH_TEST);
 // le shader
    programID = LoadShaders( "PhongShader.vert", "PhongShader.frag" );
- 
+
    // Get  handles for our matrix transformations "MVP" VIEW  MODELuniform
   MatrixIDMVP = glGetUniformLocation(programID, "MVP");
 //  MatrixIDView = glGetUniformLocation(programID, "VIEW");
@@ -235,7 +168,7 @@ void initOpenGL(void)
 
 /* on recupere l'ID */
 locCameraPosition = glGetUniformLocation(programID, "cameraPosition");
- 
+
 }
 //----------------------------------------
 int main(int argc,char **argv)
@@ -265,18 +198,14 @@ std::cout << "***** Info GPU *****" << std::endl;
     std::cout << "Version : " << glGetString (GL_VERSION) << std::endl;
     std::cout << "Version GLSL : " << glGetString (GL_SHADING_LANGUAGE_VERSION) << std::endl << std::endl;
 
-	initOpenGL(); 
+	initOpenGL();
 
 /********************
 TRACE
 ***********************/
-   
-    //createHyper();
-    
-    //createtore();
-    
+
     createaccordeon();
-    
+
 
 
 
@@ -291,7 +220,7 @@ FIN TRACE
 
  // construction des VBO a partir des tableaux du cube deja construit
   genereVBO();
-  
+
 
   /* enregistrement des fonctions de rappel */
   glutDisplayFunc(affichage);
@@ -338,13 +267,13 @@ void genereVBO ()
    glEnableVertexAttribArray(indexVertex);
    glEnableVertexAttribArray(indexNormale );
 
- 
-   
+
+
 // une fois la config terminée   ]
-   // on désactive le dernier VBO et le VAO pour qu'ils ne soit pas accidentellement modifié 
+   // on désactive le dernier VBO et le VAO pour qu'ils ne soit pas accidentellement modifié
  glBindBuffer(GL_ARRAY_BUFFER, 0);
  glBindVertexArray(0);
- 
+
 }
 //-----------------
 void deleteVBO ()
@@ -368,7 +297,7 @@ void affichage()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glColor3f(1.0,1.0,1.0);
   glPointSize(2.0);
- 
+
      View       = glm::lookAt(   cameraPosition, // Camera is at (0,0,3), in World Space
                                             glm::vec3(0,0,0), // and looks at the origin
                                             glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
@@ -399,19 +328,20 @@ void traceObjet()
 
 //on envoie les données necessaires aux shaders */
  glUniformMatrix4fv(MatrixIDMVP, 1, GL_FALSE, &MVP[0][0]);
+ glUniform1f(programID,choice);
  //glUniformMatrix4fv(MatrixIDView, 1, GL_FALSE,&View[0][0]);
  //glUniformMatrix4fv(MatrixIDModel, 1, GL_FALSE, &Model[0][0]);
  //glUniformMatrix4fv(MatrixIDPerspective, 1, GL_FALSE, &Projection[0][0]);
 
  glUniform3f(locCameraPosition,cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
- 
+
 //pour l'affichage
 	glBindVertexArray(VAO); // on active le VAO
    //glDrawElements(GL_TRIANGLES,  sizeof(indices), GL_UNSIGNED_INT, 0);// on appelle la fonction dessin pour hyperbole
-    //glDrawElements(GL_QUADS,  sizeof(indicestore), GL_UNSIGNED_INT, 0);//pour tore 
+    //glDrawElements(GL_QUADS,  sizeof(indicestore), GL_UNSIGNED_INT, 0);//pour tore
     glDrawElements(GL_QUADS,  sizeof(indicescube), GL_UNSIGNED_INT, 0);//et cube
-	
+
     glBindVertexArray(0);    // on desactive les VAO
   glUseProgram(0);         // et le pg
 
@@ -429,6 +359,22 @@ void reshape(int w, int h)
 }
 
 
+void reloadShader(
+  GLuint* program,
+  const char* vertex_shader_filename,
+  const char* fragment_shader_filename ) {
+
+  assert( program && vertex_shader_filename && fragment_shader_filename );
+
+  GLuint reloaded_program = LoadShaders(
+    vertex_shader_filename, fragment_shader_filename );
+
+  if ( reloaded_program ) {
+    glDeleteProgram( *program );
+    *program = reloaded_program;
+  }
+}
+
 void clavier(unsigned char touche,int x,int y)
 {
   switch (touche)
@@ -445,7 +391,13 @@ void clavier(unsigned char touche,int x,int y)
       glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
       glutPostRedisplay();
       break;
- 
+
+    case 'r' : /* Reload Shader */
+      printf("Reloading Shader\n");
+      choice=choice+1;
+      reloadShader(&programID,"PhongShader.vert", "PhongShader.frag");
+      break;
+
  case 'q' : /*la touche 'q' permet de quitter le programme */
       exit(0);
     }
@@ -507,10 +459,3 @@ void mouseMotion(int x, int y)
 
     glutPostRedisplay();
 }
-
-
-
-
-
-
-
