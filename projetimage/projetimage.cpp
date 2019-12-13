@@ -78,6 +78,7 @@ GLuint programID;   // handle pour le shader
 GLuint MatrixIDMVP,MatrixIDView,MatrixIDModel,MatrixIDPerspective;    // handle pour la matrice MVP
 GLuint VBO_sommets,VBO_normales, VBO_indices,VAO;
 GLuint locCameraPosition ;
+GLuint ChoiceLocation ;
 
 
 // location des VBO
@@ -168,6 +169,7 @@ void initOpenGL(void)
 
 /* on recupere l'ID */
 locCameraPosition = glGetUniformLocation(programID, "cameraPosition");
+
 
 }
 //----------------------------------------
@@ -325,10 +327,11 @@ void traceObjet()
 {
  // Use  shader & MVP matrix   MVP = Projection * View * Model;
  glUseProgram(programID);
+ ChoiceLocation = glGetUniformLocation(programID, "choice");
 
 //on envoie les données necessaires aux shaders */
  glUniformMatrix4fv(MatrixIDMVP, 1, GL_FALSE, &MVP[0][0]);
- glUniform1f(programID,choice);
+ glUniform1f(ChoiceLocation,choice);
  //glUniformMatrix4fv(MatrixIDView, 1, GL_FALSE,&View[0][0]);
  //glUniformMatrix4fv(MatrixIDModel, 1, GL_FALSE, &Model[0][0]);
  //glUniformMatrix4fv(MatrixIDPerspective, 1, GL_FALSE, &Projection[0][0]);
@@ -393,9 +396,11 @@ void clavier(unsigned char touche,int x,int y)
       break;
 
     case 'r' : /* Reload Shader */
-      printf("Reloading Shader\n");
-      choice=choice+1;
-      reloadShader(&programID,"PhongShader.vert", "PhongShader.frag");
+      //printf("Reloading Shader\n");
+      if(choice<20){choice=choice+1;}
+      else{choice=0;}
+      printf("%d \n", choice);
+      //reloadShader(&programID,"PhongShader.vert", "PhongShader.frag");
       break;
 
  case 'q' : /*la touche 'q' permet de quitter le programme */

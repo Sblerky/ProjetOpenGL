@@ -2,7 +2,7 @@
 #define M_PI 3.1415926535897932384626433832795
 
 uniform mat4 MVP;
-uniform int choice;
+uniform float choice;
 
 out float theta;
 out float alpha;
@@ -560,6 +560,28 @@ void pliagez(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
 
 void main(){
+
+  if(choice==0){compressionx(position,0,5);}
+  if(choice==1){compressionx_yz(position,0,4);}
+  if(choice==2){compressiony_xz(position,0,4);}
+  if(choice==3){compressionz_xy(position,0,4);}
+  if(choice==4){compressiony(position,-3,4);}
+  if(choice==5){compressionz(newPosition,0,4);}//bug
+  if(choice==6){rotationdiffy(position,-1,3,M_PI);}
+  if(choice==7){rotationdiffx(newPosition,-1,3,M_PI);}//bug
+  if(choice==8){rotationdiffy2(position,M_PI/2);}
+  if(choice==9){rotationdiffz2(position,M_PI/2);}
+  if(choice==10){rotationdiffx2(position,M_PI/2);}
+  if(choice==11){compressionxtrem(position,4);}
+  if(choice==12){vortexy(newPosition,2*M_PI);}//bug
+  if(choice==13){vortexz(newPosition,2*M_PI);}//bug
+  if(choice==14){torvexy(newPosition,M_PI);}//bug
+  if(choice==15){decompressionxtrem(newPosition,4);}//bug
+  if(choice==16){pliagex(position,-1,2,M_PI/4);}
+  if(choice==17){pliagey(position,-1,2,M_PI/4);}
+  if(choice==18){pliagez(position,-1,2,M_PI/4);}
+  if(choice==19){rotationdiffx(position,0,4,M_PI/3);}
+  if(choice==20){compressionx(newPosition,-1,3);}//bug
     //compressionx(position,0,5);
     //compressionx_yz(position,0,4);
     //compressiony_xz(position,0,4);
@@ -576,13 +598,9 @@ void main(){
     //vortexz(newPosition,2*M_PI);
     //torvexy(newPosition,M_PI);
     //decompressionxtrem(newPosition,4);
-
     //pliagex(position,-1,2,M_PI/4);
-    if(choice==0){pliagey(position,-1,2,M_PI/4);}
     //pliagey(position,-1,2,M_PI/4);
-    if(choice>0){pliagez(position,-1,2,M_PI/4);}
     //pliagez(position,-1,2,M_PI/4);
-
     //rotationdiffx(position,0,4,M_PI/3);
     //compressionx(newPosition,-1,3);
 
