@@ -70,7 +70,7 @@ float mouseX, mouseY;
 float cameraAngleX;
 float cameraAngleY;
 float cameraDistance=0.;
-int choice=0;
+int choice=21;
 
 // variables Handle d'opengl
 //--------------------------
@@ -104,35 +104,29 @@ DEBUT PROJET
 ********************************
 */
 
-void createaccordeon()
+void createtore()
 {
 	/* METTRE ICI LA CONSTITUTION DU TABLEAU DES SOMMETS,
 			DES NORMALES,
 			DES COULEURS
 			ET DU TABLEAU DES INDICES */
-    for(int j=0;j<8;j++) {
-        for(int i=0;i<8;i++){
-            for (int z=0;z<8;z++){
-                sommetscube[3*(i*8*8+j*8+z)]=j-4;
-                sommetscube[3*(i*8*8+j*8+z)+1]=i-4;
-                sommetscube[3*(i*8*8+j*8+z)+2]=z-4;
-            }
+    for(int j=0;j<MAXMERID;j++) {
+        for(int i=0;i<MAXMERID;i++){
+            sommetscube[3*(i*MAXMERID+j)]=(rayon1 + rayon2*cos(j*theta))*cos(i*zeta);
+            sommetscube[3*(i*MAXMERID+j)+1]=(rayon1 + rayon2*cos(j*theta))*sin(i*zeta);
+            sommetscube[3*(i*MAXMERID+j)+2]=rayon2*sin(j*theta);
         }
     }
 
 
 
-    for(int i=0;i<8;i++){
-        for (int j=0;j<8;j++){
-            for (int z=0;z<8;z++){
+    for(int i=0;i<MAXMERID;i++){
+        for (int j=0;j<MAXMERID;j++){
                 //corps
-                indicescube[4*(i*8*8+j*8+z)]=(unsigned int) i*8*8+j*8+z;
-                indicescube[4*(i*8*8+j*8+z)+1]=(unsigned int) i*8*8+j*8+(z+1);
-                indicescube[4*(i*8*8+j*8+z)+2]=(unsigned int) i*8*8+((j+1))*8+(z+1);
-                indicescube[4*(i*8*8+j*8+z)+3]=(unsigned int) i*8*8+((j+1))*8+z;
-
-
-            }
+                indicescube[4*(i*MAXMERID+j)]=(unsigned int) i*MAXMERID+j;
+                indicescube[4*(i*MAXMERID+j)+1]=(unsigned int) ((i+1)%MAXMERID)*MAXMERID+j;
+                indicescube[4*(i*MAXMERID+j)+2]=(unsigned int) (((i+1)%MAXMERID)*MAXMERID)+(j+1)%MAXMERID;
+                indicescube[4*(i*MAXMERID+j)+3]=(unsigned int) i*MAXMERID+(j+1)%MAXMERID;
 
         }
     }
@@ -205,15 +199,7 @@ std::cout << "***** Info GPU *****" << std::endl;
 /********************
 TRACE
 ***********************/
-
-    createaccordeon();
-
-
-
-
-
-
-
+    createtore();
 
 /****************
 FIN TRACE
@@ -397,7 +383,7 @@ void clavier(unsigned char touche,int x,int y)
 
     case 'r' : /* Reload Shader */
       //printf("Reloading Shader\n");
-      if(choice<20){choice=choice+1;}
+      if(choice<21){choice=choice+1;}
       else{choice=0;}
       printf("%d \n", choice);
       //reloadShader(&programID,"PhongShader.vert", "PhongShader.frag");
