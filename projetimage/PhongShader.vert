@@ -316,6 +316,7 @@ void vortexz(vec3 vecteur,float anglerot)
 
 }
 
+
 void vortexx(vec3 vecteur,float anglerot)
 {
     theta=anglerot*vecteur.z/8;
