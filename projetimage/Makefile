@@ -5,6 +5,7 @@ CC = g++
 
 HyperboloideVBOShader: projetimage.o shader.o
 	$(CC) -o projetimage projetimage.o shader.o -lGL -lGLU -lGLEW -lglut -lm
+	./projetimage
 all: projetimage
 
 #Compilation avec Cygwin
