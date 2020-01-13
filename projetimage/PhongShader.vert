@@ -561,33 +561,34 @@ void pliagez(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
 
 void main(){
-
-  if(choice==0){compressionx(position,0,5);}
-  if(choice==1){compressionx_yz(position,0,4);}
-  if(choice==2){compressiony_xz(position,0,4);}
-  if(choice==3){compressionz_xy(position,0,4);}
-  if(choice==4){compressiony(position,-3,4);}
-  if(choice==5){compressionz(position,0,4);}
-  if(choice==6){rotationdiffy(position,-1,3,M_PI);}
-  if(choice==7){rotationdiffx(position,-1,3,M_PI);}
-  if(choice==8){rotationdiffy2(position,M_PI/2);}
-  if(choice==9){rotationdiffz2(position,M_PI/2);}
-  if(choice==10){rotationdiffx2(position,M_PI/2);}
-  if(choice==11){compressionxtrem(position,4);}
-  if(choice==12){vortexy(position,2*M_PI);}
-  if(choice==13){vortexz(position,2*M_PI);}
-  if(choice==14){torvexy(position,M_PI);}
-  if(choice==15){decompressionxtrem(position,4);}
-  if(choice==16){pliagex(position,-1,2,M_PI/4);}
-  if(choice==17){pliagey(position,-1,2,M_PI/4);}
-  if(choice==18){pliagez(position,-1,2,M_PI/4);}
-  if(choice==19){rotationdiffx(position,0,4,M_PI/3);}
-  if(choice==20){compressionx(position,-1,3);}
-  if(choice==21){newPosition=position;}
-
-	gl_Position = MVP*vec4(newPosition, 1.0);
+	
+    if(choice==1){newPosition=position;}
+    if(choice==2){compressionx(position,0,5);}
+    if(choice==3){compressionx_yz(position,0,4);}
+    if(choice==4){compressiony_xz(position,0,4);}
+    if(choice==5){compressionz_xy(position,0,4);}
+    if(choice==6){compressiony(position,-3,4);}
+    if(choice==7){compressionz(position,0,4);}
+    if(choice==8){rotationdiffy(position,-1,3,M_PI);}
+    if(choice==9){rotationdiffx(position,-1,3,M_PI);}
+    if(choice==10){rotationdiffy2(position,M_PI/2);}
+    if(choice==11){rotationdiffz2(position,M_PI/2);}
+    if(choice==12){rotationdiffx2(position,M_PI/2);}
+    if(choice==13){compressionxtrem(position,4);}
+    if(choice==14){vortexy(position,2*M_PI);}
+    if(choice==15){vortexz(position,2*M_PI);}
+    if(choice==16){torvexy(position,M_PI);}
+    if(choice==17){decompressionxtrem(position,4);}
+    if(choice==18){pliagex(position,-1,2,M_PI/4);}
+    if(choice==19){pliagey(position,-1,2,M_PI/4);}
+    if(choice==20){pliagez(position,-1,2,M_PI/4);}
+    if(choice==21){rotationdiffx(position,0,4,M_PI/3);}
+    if(choice==22){compressionx(position,-1,3);}
+  
+    gl_Position = MVP*vec4(newPosition, 1.0);
 
 	fragPosition = newPosition;
+
 
 
 }

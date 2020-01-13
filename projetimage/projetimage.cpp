@@ -1,10 +1,3 @@
-/********************************************************/
-/*                     HyperboloideVBOShader.cpp                         */
-/********************************************************/
-/* Premiers pas avec OpenGL.                            */
-/* Objectif : afficher a l'ecran un objet VBO avec ou shader    */
-/********************************************************/
-
 /* inclusion des fichiers d'en-tete Glut */
 #include <iostream>
 #include <sstream>
@@ -17,6 +10,15 @@
 #include <math.h>
 #include "shader.hpp"
 #include <string.h>
+#include <vector>
+
+#include <fstream>
+#include <GL/glut.h>
+#include <GL/glu.h>
+#include <GL/gl.h>
+#include <algorithm>
+#include <string>
+#include <utility>
 
 // Include GLM
 #include "../glm/glm.hpp"
@@ -52,6 +54,64 @@ void genereVBO();
 void deleteVBO();
 void traceObjet();
 
+void appelfonction1();
+void appelfonction2();
+void appelfonction3();
+void appelfonction4();
+void appelfonction5();
+void appelfonction6();
+void appelfonction7();
+void appelfonction8();
+void appelfonction9();
+void appelfonction10();
+void appelfonction11();
+void appelfonction12();
+void appelfonction13();
+void appelfonction14();
+void appelfonction15();
+void appelfonction16();
+void appelfonction17();
+void appelfonction18();
+void appelfonction19();
+void appelfonction20();
+void appelfonction21();
+void appelfonction22();
+
+enum TypeBouton
+{
+    action1 = 0,
+    action2,
+    action3,
+    action4,
+    action5,
+    action6,
+    action7,
+    action8,
+    action9,
+    action10,
+    action11,
+    action12,
+    action13,
+    action14,
+    action15,
+    action16,
+    action17,
+    action18,
+    action19,
+    action20,
+    action21,
+    action22,
+    action23,
+    action24,
+    action25,
+    action26
+} bouton_action = action1;
+
+static void  menu (int item){
+    bouton_action = static_cast<TypeBouton> (item);
+    glutPostRedisplay(); 
+} 
+
 // fonctions de rappel de glut
 void affichage();
 void clavier(unsigned char,int,int);
@@ -69,8 +129,8 @@ bool mouseMiddleDown;
 float mouseX, mouseY;
 float cameraAngleX;
 float cameraAngleY;
-float cameraDistance=0.;
-int choice=21;
+float cameraDistance=290.;
+int choice=1;
 
 // variables Handle d'opengl
 //--------------------------
@@ -96,20 +156,9 @@ int screenHeight = 500;
 int screenWidth = 500;
 
 
-
-
-/*
-********************************
-DEBUT PROJET
-********************************
-*/
-
+/*********************************DEBUT PROJET*********************************/
 void createtore()
 {
-	/* METTRE ICI LA CONSTITUTION DU TABLEAU DES SOMMETS,
-			DES NORMALES,
-			DES COULEURS
-			ET DU TABLEAU DES INDICES */
     for(int j=0;j<MAXMERID;j++) {
         for(int i=0;i<MAXMERID;i++){
             sommetscube[3*(i*MAXMERID+j)]=(rayon1 + rayon2*cos(j*theta))*cos(i*zeta);
@@ -131,64 +180,71 @@ void createtore()
         }
     }
 }
-
-
-/*
-*****************
-FIN PROJET
-*****************
-*/
-
-
+/**********************************FIN PROJET**********************************/
 
 //----------------------------------------
 void initOpenGL(void)
-//----------------------------------------
 {
   glCullFace (GL_BACK); // on spécifie queil faut éliminer les face arriere
-  //glEnable(GL_CULL_FACE); // on active l'élimination des faces qui par défaut n'est pas active
   glEnable(GL_DEPTH_TEST);
 // le shader
    programID = LoadShaders( "PhongShader.vert", "PhongShader.frag" );
 
-   // Get  handles for our matrix transformations "MVP" VIEW  MODELuniform
   MatrixIDMVP = glGetUniformLocation(programID, "MVP");
-//  MatrixIDView = glGetUniformLocation(programID, "VIEW");
- // MatrixIDModel = glGetUniformLocation(programID, "MODEL");
- // MatrixIDPerspective = glGetUniformLocation(programID, "PERSPECTIVE");
 
-  // Projection matrix : 65 Field of View, 1:1 ratio, display range : 1 unit <-> 1000 units
-  // ATTENTIOn l'angle est donné en radians si f GLM_FORCE_RADIANS est défini sinon en degré
   Projection = glm::perspective( glm::radians(60.f), 1.0f, 1.0f, 1000.0f);
 
 /* on recupere l'ID */
 locCameraPosition = glGetUniformLocation(programID, "cameraPosition");
 
-
 }
+
 //----------------------------------------
 int main(int argc,char **argv)
-//----------------------------------------
 {
-
   /* initialisation de glut et creation
      de la fenetre */
-
   glutInit(&argc,argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE|GLUT_RGB);
   glutInitWindowPosition(200,200);
   glutInitWindowSize(screenWidth,screenHeight);
-  glutCreateWindow("Hyperboloide VBO SHADER ");
+  glutCreateWindow("Projet VBO SHADER ");
 
+  /* le menuuuu */
+  glutCreateMenu (menu);
+  glutAddMenuEntry ("Base", action1);
+  glutAddMenuEntry ("Compression X", action2);
+  glutAddMenuEntry ("Compression X_YZ", action3);
+  glutAddMenuEntry ("Compression Y_XZ", action4);
+  glutAddMenuEntry ("Compression Z_XY", action5);
+  glutAddMenuEntry ("Compression Y", action6);
+  glutAddMenuEntry ("Compression Z", action7);
+  glutAddMenuEntry ("Rotation Diff Y", action8);
+  glutAddMenuEntry ("Rotation Diff X", action9);
+  glutAddMenuEntry ("Rotation Diff Y2", action10);
+  glutAddMenuEntry ("Rotation Diff Z2", action11);
+  glutAddMenuEntry ("Rotation Diff X2", action12);
+  glutAddMenuEntry ("Compression xtrem", action13);
+  glutAddMenuEntry ("Vortex Y", action14);
+  glutAddMenuEntry ("Vortex Z", action15);
+  glutAddMenuEntry ("Torvex Y", action16);
+  glutAddMenuEntry ("Decompression xtrem", action17);
+  glutAddMenuEntry ("Pliage X", action18);
+  glutAddMenuEntry ("Pliage Y", action19);
+  glutAddMenuEntry ("Pliage Z", action20);
+  glutAddMenuEntry ("Rotation diff X", action21);
+  glutAddMenuEntry ("Compression X", action22);
 
-// Initialize GLEW
+  glutAttachMenu (GLUT_MIDDLE_BUTTON);
+
+  // Initialize GLEW
 	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "Failed to initialize GLEW\n");
 		return -1;
 	}
 
-//info version GLSL
-std::cout << "***** Info GPU *****" << std::endl;
+    //info version GLSL
+    std::cout << "***** Info GPU *****" << std::endl;
     std::cout << "Fabricant : " << glGetString (GL_VENDOR) << std::endl;
     std::cout << "Carte graphique: " << glGetString (GL_RENDERER) << std::endl;
     std::cout << "Version : " << glGetString (GL_VERSION) << std::endl;
@@ -196,15 +252,9 @@ std::cout << "***** Info GPU *****" << std::endl;
 
 	initOpenGL();
 
-/********************
-TRACE
-***********************/
-    createtore();
-
-/****************
-FIN TRACE
-*********************/
-
+/********************TRACE***********************/
+  createtore();
+/****************FIN TRACE*********************/
 
  // construction des VBO a partir des tableaux du cube deja construit
   genereVBO();
@@ -230,7 +280,6 @@ void genereVBO ()
     glGenBuffers(1, &VAO);
     glBindVertexArray(VAO); // ici on bind le VAO , c'est lui qui recupèrera les configurations des VBO glVertexAttribPointer , glEnableVertexAttribArray...
 
-
     if(glIsBuffer(VBO_sommets) == GL_TRUE) glDeleteBuffers(1, &VBO_sommets);
     glGenBuffers(1, &VBO_sommets);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_sommets);
@@ -248,29 +297,25 @@ void genereVBO ()
     if(glIsBuffer(VBO_indices) == GL_TRUE) glDeleteBuffers(1, &VBO_indices);
     glGenBuffers(1, &VBO_indices); // ATTENTIOn IBO doit etre un GL_ELEMENT_ARRAY_BUFFER
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO_indices);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices),indices , GL_STATIC_DRAW);//pour hyperbole
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestore),indicestore , GL_STATIC_DRAW);//pout tore
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicescube),indicescube , GL_STATIC_DRAW);//accordéon
 
    glEnableVertexAttribArray(indexVertex);
    glEnableVertexAttribArray(indexNormale );
 
-
-
-// une fois la config terminée   ]
-   // on désactive le dernier VBO et le VAO pour qu'ils ne soit pas accidentellement modifié
- glBindBuffer(GL_ARRAY_BUFFER, 0);
- glBindVertexArray(0);
+  // une fois la config terminée   ]
+  // on désactive le dernier VBO et le VAO pour qu'ils ne soit pas accidentellement modifié
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
 
 }
+
 //-----------------
 void deleteVBO ()
-//-----------------
 {
-    glDeleteBuffers(1, &VBO_sommets);
-   glDeleteBuffers(1, &VBO_normales);
-    glDeleteBuffers(1, &VBO_indices);
-        glDeleteBuffers(1, &VAO);
+  glDeleteBuffers(1, &VBO_sommets);
+  glDeleteBuffers(1, &VBO_normales);
+  glDeleteBuffers(1, &VBO_indices);
+  glDeleteBuffers(1, &VAO);
 }
 
 
@@ -279,7 +324,7 @@ void affichage()
 {
 
   /* effacement de l'image avec la couleur de fond */
- /* Initialisation d'OpenGL */
+  /* Initialisation d'OpenGL */
   glClearColor(0.0,0.0,0.0,0.0);
   glClearDepth(10.0f);                         // 0 is near, >0 is far
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -298,18 +343,82 @@ void affichage()
      MVP = Projection * View * Model;
      traceObjet();        // trace VBO avec ou sans shader
 
+switch(bouton_action){
+        case action1: choice=1;
+        break;
+
+        case action2: choice=2;
+        break;
+
+        case action3: choice=3;
+        break;
+
+        case action4: choice=4;
+        break;
+
+        case action5: choice=5;
+        break;
+
+        case action6: choice=6;
+        break;
+
+        case action7: choice=7;
+        break;
+
+        case action8: choice=8;
+        break;
+
+        case action9: choice=9;
+        break;
+
+        case action10: choice=10;
+        break;
+
+        case action11: choice=11;
+        break;
+
+        case action12: choice=12;
+        break;
+
+        case action13: choice=13;
+        break;
+
+        case action14: choice=14;
+        break;
+
+        case action15: choice=15;
+        break;
+
+        case action16: choice=16;
+        break;
+
+        case action17: choice=17;
+        break;
+
+        case action18: choice=18;
+        break;
+
+        case action19: choice=19;
+        break;
+
+        case action20: choice=20;
+        break;
+
+        case action21: choice=21;
+        break;
+
+        case action22: choice=22;
+        break;
+    }
+
  /* on force l'affichage du resultat */
    glutPostRedisplay();
    glutSwapBuffers();
 }
 
-
-
-
 //-------------------------------------
 //Trace le tore 2 via le VAO
 void traceObjet()
-//-------------------------------------
 {
  // Use  shader & MVP matrix   MVP = Projection * View * Model;
  glUseProgram(programID);
@@ -327,11 +436,11 @@ void traceObjet()
 
 //pour l'affichage
 	glBindVertexArray(VAO); // on active le VAO
-   //glDrawElements(GL_TRIANGLES,  sizeof(indices), GL_UNSIGNED_INT, 0);// on appelle la fonction dessin pour hyperbole
-    //glDrawElements(GL_QUADS,  sizeof(indicestore), GL_UNSIGNED_INT, 0);//pour tore
-    glDrawElements(GL_QUADS,  sizeof(indicescube), GL_UNSIGNED_INT, 0);//et cube
+  //glDrawElements(GL_TRIANGLES,  sizeof(indices), GL_UNSIGNED_INT, 0);// on appelle la fonction dessin pour hyperbole
+  //glDrawElements(GL_QUADS,  sizeof(indicestore), GL_UNSIGNED_INT, 0);//pour tore
+  glDrawElements(GL_QUADS,  sizeof(indicescube), GL_UNSIGNED_INT, 0);//et cube
 
-    glBindVertexArray(0);    // on desactive les VAO
+  glBindVertexArray(0);    // on desactive les VAO
   glUseProgram(0);         // et le pg
 
 }
@@ -345,23 +454,6 @@ void reshape(int w, int h)
     float aspectRatio = (float)w / h;
 
     Projection = glm::perspective(glm::radians(60.0f),(float)(w)/(float)h, 1.0f, 1000.0f);
-}
-
-
-void reloadShader(
-  GLuint* program,
-  const char* vertex_shader_filename,
-  const char* fragment_shader_filename ) {
-
-  assert( program && vertex_shader_filename && fragment_shader_filename );
-
-  GLuint reloaded_program = LoadShaders(
-    vertex_shader_filename, fragment_shader_filename );
-
-  if ( reloaded_program ) {
-    glDeleteProgram( *program );
-    *program = reloaded_program;
-  }
 }
 
 void clavier(unsigned char touche,int x,int y)
@@ -381,20 +473,10 @@ void clavier(unsigned char touche,int x,int y)
       glutPostRedisplay();
       break;
 
-    case 'r' : /* Reload Shader */
-      //printf("Reloading Shader\n");
-      if(choice<21){choice=choice+1;}
-      else{choice=0;}
-      printf("%d \n", choice);
-      //reloadShader(&programID,"PhongShader.vert", "PhongShader.frag");
-      break;
-
  case 'q' : /*la touche 'q' permet de quitter le programme */
       exit(0);
     }
 }
-
-
 
 void mouse(int button, int state, int x, int y)
 {
@@ -431,7 +513,6 @@ void mouse(int button, int state, int x, int y)
             mouseMiddleDown = false;
     }
 }
-
 
 void mouseMotion(int x, int y)
 {
