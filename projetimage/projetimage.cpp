@@ -30,10 +30,11 @@ using namespace std;
 #define MAXMERID 20
 #define BUFFER_OFFSET(i) ((unsigned int *)NULL + (i))
 
-//hyperbole
-GLfloat sommets[2*MAXMERID*3+6] ; // x 3 coordonnées
-GLuint indices[MAXMERID*12]; // x6 car pour chaque face quadrangulaire on a 6 indices (2 triangles=2x 3 indices)
 GLfloat normales[2*MAXMERID*3];
+
+//hyperbole
+GLfloat sommetshyper[2*MAXMERID*3+6] ;
+GLuint indiceshyper[MAXMERID*12];
 double theta=2*M_PI/double(MAXMERID);
 double alpha=M_PI/1.2;
 
@@ -44,38 +45,20 @@ double rayon1=2.0;
 double rayon2=1.0;
 double zeta=2*M_PI/double(MAXMERID);
 
-GLfloat sommetscube[3*8*8*8];
-GLuint indicescube[4*8*8*8];
-
 
 // initialisations
 
-void genereVBO();
+void genereVBOtore();
+void genereVBOhyper();
 void deleteVBO();
-void traceObjet();
+void traceObjettore();
+void traceObjethyper();
+void reloadShader();
+
+int choix = 2; //de l'objet (1=hyper et 2=tore)
 
 void appelfonction1();
 void appelfonction2();
-void appelfonction3();
-void appelfonction4();
-void appelfonction5();
-void appelfonction6();
-void appelfonction7();
-void appelfonction8();
-void appelfonction9();
-void appelfonction10();
-void appelfonction11();
-void appelfonction12();
-void appelfonction13();
-void appelfonction14();
-void appelfonction15();
-void appelfonction16();
-void appelfonction17();
-void appelfonction18();
-void appelfonction19();
-void appelfonction20();
-void appelfonction21();
-void appelfonction22();
 
 enum TypeBouton
 {
@@ -104,7 +87,14 @@ enum TypeBouton
     action23,
     action24,
     action25,
-    action26
+    action26,
+    action27,
+    action28,
+    action29,
+    action30,
+    action31,
+    action50,
+    action51
 } bouton_action = action1;
 
 static void  menu (int item){
@@ -130,7 +120,7 @@ float mouseX, mouseY;
 float cameraAngleX;
 float cameraAngleY;
 float cameraDistance=290.;
-int choice=1;
+int choice=0;
 
 // variables Handle d'opengl
 //--------------------------
@@ -155,29 +145,89 @@ glm::mat4 Model, View, Projection;    // Matrices constituant MVP
 int screenHeight = 500;
 int screenWidth = 500;
 
+void reloadShader(
+  GLuint* program,
+  const char* vertex_shader_filename,
+  const char* fragment_shader_filename ) {
+
+  assert( program && vertex_shader_filename && fragment_shader_filename );
+
+  GLuint reloaded_program = LoadShaders(
+    vertex_shader_filename, fragment_shader_filename );
+
+  if ( reloaded_program ) {
+    glDeleteProgram( *program );
+    *program = reloaded_program;
+  }
+}
 
 /*********************************DEBUT PROJET*********************************/
 void createtore()
 {
     for(int j=0;j<MAXMERID;j++) {
         for(int i=0;i<MAXMERID;i++){
-            sommetscube[3*(i*MAXMERID+j)]=(rayon1 + rayon2*cos(j*theta))*cos(i*zeta);
-            sommetscube[3*(i*MAXMERID+j)+1]=(rayon1 + rayon2*cos(j*theta))*sin(i*zeta);
-            sommetscube[3*(i*MAXMERID+j)+2]=rayon2*sin(j*theta);
+            sommetstore[3*(i*MAXMERID+j)]=(rayon1 + rayon2*cos(j*theta))*cos(i*zeta);
+            sommetstore[3*(i*MAXMERID+j)+1]=(rayon1 + rayon2*cos(j*theta))*sin(i*zeta);
+            sommetstore[3*(i*MAXMERID+j)+2]=rayon2*sin(j*theta);
         }
     }
-
-
 
     for(int i=0;i<MAXMERID;i++){
         for (int j=0;j<MAXMERID;j++){
                 //corps
-                indicescube[4*(i*MAXMERID+j)]=(unsigned int) i*MAXMERID+j;
-                indicescube[4*(i*MAXMERID+j)+1]=(unsigned int) ((i+1)%MAXMERID)*MAXMERID+j;
-                indicescube[4*(i*MAXMERID+j)+2]=(unsigned int) (((i+1)%MAXMERID)*MAXMERID)+(j+1)%MAXMERID;
-                indicescube[4*(i*MAXMERID+j)+3]=(unsigned int) i*MAXMERID+(j+1)%MAXMERID;
+                indicestore[4*(i*MAXMERID+j)]=(unsigned int) i*MAXMERID+j;
+                indicestore[4*(i*MAXMERID+j)+1]=(unsigned int) ((i+1)%MAXMERID)*MAXMERID+j;
+                indicestore[4*(i*MAXMERID+j)+2]=(unsigned int) (((i+1)%MAXMERID)*MAXMERID)+(j+1)%MAXMERID;
+                indicestore[4*(i*MAXMERID+j)+3]=(unsigned int) i*MAXMERID+(j+1)%MAXMERID;
 
         }
+    }
+}
+
+void createhyper()
+{
+    for (int i=0; i<MAXMERID; i++){
+
+        sommetshyper[i*3+0] = cos(i*theta);
+        sommetshyper[i*3+1] = 1;
+        sommetshyper[i*3+2] = sin(i*theta);
+
+        sommetshyper[(i+MAXMERID)*3+0] = cos(i*theta);
+        sommetshyper[(i+MAXMERID)*3+1] = -1;
+        sommetshyper[(i+MAXMERID)*3+2] = sin(i*theta);
+    }
+
+    sommetshyper[2*MAXMERID*3+0] = 0;
+    sommetshyper[2*MAXMERID*3+1] = 1;
+    sommetshyper[2*MAXMERID*3+2] = 0;
+
+    sommetshyper[2*MAXMERID*3+3] = 0;
+    sommetshyper[2*MAXMERID*3+4] = -1;
+    sommetshyper[2*MAXMERID*3+5] = 0;
+
+    for (int i=0; i<MAXMERID; i++){
+
+        indiceshyper[i*4+0] = i;
+        indiceshyper[i*4+1] = (i+1)%MAXMERID;
+        indiceshyper[i*4+2] = (i+1)%MAXMERID+MAXMERID;
+        indiceshyper[i*4+3] = i+MAXMERID;
+        
+    }
+
+    for (int i=0; i<MAXMERID; i++){
+
+        indiceshyper[MAXMERID*4+i*3+0] = (i+1)%MAXMERID;
+        indiceshyper[MAXMERID*4+i*3+1] = i;
+        indiceshyper[MAXMERID*4+i*3+2] = 2*MAXMERID;
+
+    }
+
+    for (int i=0; i<MAXMERID; i++){
+
+        indiceshyper[MAXMERID*4+3*MAXMERID+i*3+0] = i+MAXMERID;
+        indiceshyper[MAXMERID*4+3*MAXMERID+i*3+1] = (i+1)%MAXMERID+MAXMERID;
+        indiceshyper[MAXMERID*4+3*MAXMERID+i*3+2] = 2*MAXMERID+1;
+
     }
 }
 /**********************************FIN PROJET**********************************/
@@ -211,29 +261,45 @@ int main(int argc,char **argv)
   glutCreateWindow("Projet VBO SHADER ");
 
   /* le menuuuu */
+  int menuMode = glutCreateMenu(menu);
+  glutAddMenuEntry("Hyper",action50);
+  glutAddMenuEntry("Tore",action51);
   glutCreateMenu (menu);
   glutAddMenuEntry ("Base", action1);
+  glutAddSubMenu("Mode",menuMode);
   glutAddMenuEntry ("Compression X", action2);
+  glutAddMenuEntry ("Compression X", action21);
+  glutAddMenuEntry ("Compression Y", action6);
+  glutAddMenuEntry ("Compression Z", action7);
+  glutAddMenuEntry ("Compression X_YZ totale", action28);
   glutAddMenuEntry ("Compression X_YZ", action3);
   glutAddMenuEntry ("Compression Y_XZ", action4);
   glutAddMenuEntry ("Compression Z_XY", action5);
-  glutAddMenuEntry ("Compression Y", action6);
-  glutAddMenuEntry ("Compression Z", action7);
-  glutAddMenuEntry ("Rotation Diff Y", action8);
   glutAddMenuEntry ("Rotation Diff X", action9);
+  glutAddMenuEntry ("Rotation Diff X2", action11);
+  glutAddMenuEntry ("Rotation Diff Y", action8);
   glutAddMenuEntry ("Rotation Diff Y2", action10);
-  glutAddMenuEntry ("Rotation Diff Z2", action11);
-  glutAddMenuEntry ("Rotation Diff X2", action12);
-  glutAddMenuEntry ("Compression xtrem", action13);
-  glutAddMenuEntry ("Vortex Y", action14);
-  glutAddMenuEntry ("Vortex Z", action15);
-  glutAddMenuEntry ("Torvex Y", action16);
-  glutAddMenuEntry ("Decompression xtrem", action17);
-  glutAddMenuEntry ("Pliage X", action18);
-  glutAddMenuEntry ("Pliage Y", action19);
-  glutAddMenuEntry ("Pliage Z", action20);
-  glutAddMenuEntry ("Rotation diff X", action21);
-  glutAddMenuEntry ("Compression X", action22);
+  glutAddMenuEntry ("Rotation diff X", action20);
+  glutAddMenuEntry ("Compression xtrem", action12);
+  glutAddMenuEntry ("Compression xtremX", action25);
+  glutAddMenuEntry ("Compression xtremY", action26);
+  glutAddMenuEntry ("Compression xtremZ", action27);
+  glutAddMenuEntry ("Decompression xtrem", action16);
+  glutAddMenuEntry ("Decompression xtremX", action22);
+  glutAddMenuEntry ("Decompression xtremY", action23);
+  glutAddMenuEntry ("Decompression xtremZ", action24);
+  glutAddMenuEntry ("Vortex X", action29);
+  glutAddMenuEntry ("Vortex Y", action13);
+  glutAddMenuEntry ("Vortex Z", action14);
+  glutAddMenuEntry ("Torvex X", action30);
+  glutAddMenuEntry ("Torvex Y", action15);
+  glutAddMenuEntry ("Torvex Z", action31);
+  glutAddMenuEntry ("Pliage X", action17);
+  glutAddMenuEntry ("Pliage Y", action18);
+  glutAddMenuEntry ("Pliage Z", action19);
+  
+
+
 
   glutAttachMenu (GLUT_MIDDLE_BUTTON);
 
@@ -253,12 +319,21 @@ int main(int argc,char **argv)
 	initOpenGL();
 
 /********************TRACE***********************/
-  createtore();
-/****************FIN TRACE*********************/
+  if (choix==1){
+    createhyper();
+    genereVBOhyper();
+  }  
+  else {
+    createtore();
+    genereVBOtore();
+  }
+  
+
 
  // construction des VBO a partir des tableaux du cube deja construit
-  genereVBO();
+  
 
+/****************FIN TRACE*********************/
 
   /* enregistrement des fonctions de rappel */
   glutDisplayFunc(affichage);
@@ -274,18 +349,14 @@ int main(int argc,char **argv)
   deleteVBO();
   return 0;
 }
-
-void genereVBO ()
-{
-    glGenBuffers(1, &VAO);
+void genereVBOtore(){
+  glGenBuffers(1, &VAO);
     glBindVertexArray(VAO); // ici on bind le VAO , c'est lui qui recupèrera les configurations des VBO glVertexAttribPointer , glEnableVertexAttribArray...
 
     if(glIsBuffer(VBO_sommets) == GL_TRUE) glDeleteBuffers(1, &VBO_sommets);
     glGenBuffers(1, &VBO_sommets);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_sommets);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(sommets),sommets , GL_STATIC_DRAW); //pour hyperbole
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(sommetstore),sommetstore , GL_STATIC_DRAW); //pour tore
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sommetscube),sommetscube , GL_STATIC_DRAW); //pour accordeon
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sommetstore),sommetstore , GL_STATIC_DRAW); //pour tore
     glVertexAttribPointer ( indexVertex, 3, GL_FLOAT, GL_FALSE, 0, (void*)0 );
 
     if(glIsBuffer(VBO_normales) == GL_TRUE) glDeleteBuffers(1, &VBO_normales);
@@ -297,7 +368,39 @@ void genereVBO ()
     if(glIsBuffer(VBO_indices) == GL_TRUE) glDeleteBuffers(1, &VBO_indices);
     glGenBuffers(1, &VBO_indices); // ATTENTIOn IBO doit etre un GL_ELEMENT_ARRAY_BUFFER
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO_indices);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicescube),indicescube , GL_STATIC_DRAW);//accordéon
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestore),indicestore , GL_STATIC_DRAW);//tore
+
+   glEnableVertexAttribArray(indexVertex);
+   glEnableVertexAttribArray(indexNormale );
+
+  // une fois la config terminée   ]
+  // on désactive le dernier VBO et le VAO pour qu'ils ne soit pas accidentellement modifié
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);}
+
+void genereVBOhyper()
+{
+    glGenBuffers(1, &VAO);
+    glBindVertexArray(VAO); // ici on bind le VAO , c'est lui qui recupèrera les configurations des VBO glVertexAttribPointer , glEnableVertexAttribArray...
+
+    if(glIsBuffer(VBO_sommets) == GL_TRUE) glDeleteBuffers(1, &VBO_sommets);
+    glGenBuffers(1, &VBO_sommets);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_sommets);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sommetshyper),sommetshyper , GL_STATIC_DRAW); //pour hyperbole
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(sommetstore),sommetstore , GL_STATIC_DRAW); //pour tore
+    glVertexAttribPointer ( indexVertex, 3, GL_FLOAT, GL_FALSE, 0, (void*)0 );
+
+    if(glIsBuffer(VBO_normales) == GL_TRUE) glDeleteBuffers(1, &VBO_normales);
+    glGenBuffers(1, &VBO_normales);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_normales);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(normales),normales , GL_STATIC_DRAW);
+    glVertexAttribPointer ( indexNormale, 3, GL_FLOAT, GL_FALSE, 0, (void*)0  );
+
+    if(glIsBuffer(VBO_indices) == GL_TRUE) glDeleteBuffers(1, &VBO_indices);
+    glGenBuffers(1, &VBO_indices); // ATTENTIOn IBO doit etre un GL_ELEMENT_ARRAY_BUFFER
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO_indices);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indiceshyper),indiceshyper , GL_STATIC_DRAW);//hyper
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestore),indicestore , GL_STATIC_DRAW);//tore
 
    glEnableVertexAttribArray(indexVertex);
    glEnableVertexAttribArray(indexNormale );
@@ -335,14 +438,20 @@ void affichage()
                                             glm::vec3(0,0,0), // and looks at the origin
                                             glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
                                              );
-     Model = glm::mat4(1.0f);
-     Model = glm::translate(Model,glm::vec3(0,0,cameraDistance));
-     Model = glm::rotate(Model,glm::radians(cameraAngleX),glm::vec3(1, 0, 0) );
-     Model = glm::rotate(Model,glm::radians(cameraAngleY),glm::vec3(0, 1, 0) );
-     Model = glm::scale(Model,glm::vec3(0.4, 0.4, 0.4));
-     MVP = Projection * View * Model;
-     traceObjet();        // trace VBO avec ou sans shader
+    Model = glm::mat4(1.0f);
+    Model = glm::translate(Model,glm::vec3(0,0,cameraDistance));
+    Model = glm::rotate(Model,glm::radians(cameraAngleX),glm::vec3(1, 0, 0) );
+    Model = glm::rotate(Model,glm::radians(cameraAngleY),glm::vec3(0, 1, 0) );
+    Model = glm::scale(Model,glm::vec3(0.4, 0.4, 0.4));
+    MVP = Projection * View * Model;
 
+    if (choix==1){ // trace VBO avec ou sans shader
+      traceObjethyper();
+    }  
+    else {
+      traceObjettore();
+    }       
+    
 switch(bouton_action){
         case action1: choice=1;
         break;
@@ -409,6 +518,39 @@ switch(bouton_action){
 
         case action22: choice=22;
         break;
+
+        case action23: choice=23;
+        break;
+
+        case action24: choice=24;
+        break;
+
+        case action25: choice=25;
+        break;
+
+        case action26: choice=26;
+        break;
+
+        case action27: choice=27;
+        break;
+
+        case action28: choice=28;
+        break;
+        
+        case action29: choice=29;
+        break;
+
+        case action30: choice=30;
+        break;
+        
+        case action31: choice=31;
+        break;
+
+        case action50: appelfonction1();
+        break;
+        
+        case action51: appelfonction2();
+        break;
     }
 
  /* on force l'affichage du resultat */
@@ -416,9 +558,18 @@ switch(bouton_action){
    glutSwapBuffers();
 }
 
+void appelfonction1(){
+  choix=1;
+  reloadShader(&programID,"PhongShader.vert", "PhongShader.frag");
+}
+
+void appelfonction2(){
+  choix=2;
+  reloadShader(&programID,"PhongShader.vert", "PhongShader.frag");
+}
+
 //-------------------------------------
-//Trace le tore 2 via le VAO
-void traceObjet()
+void traceObjettore()
 {
  // Use  shader & MVP matrix   MVP = Projection * View * Model;
  glUseProgram(programID);
@@ -427,18 +578,36 @@ void traceObjet()
 //on envoie les données necessaires aux shaders */
  glUniformMatrix4fv(MatrixIDMVP, 1, GL_FALSE, &MVP[0][0]);
  glUniform1f(ChoiceLocation,choice);
- //glUniformMatrix4fv(MatrixIDView, 1, GL_FALSE,&View[0][0]);
- //glUniformMatrix4fv(MatrixIDModel, 1, GL_FALSE, &Model[0][0]);
- //glUniformMatrix4fv(MatrixIDPerspective, 1, GL_FALSE, &Projection[0][0]);
 
  glUniform3f(locCameraPosition,cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
 
 //pour l'affichage
 	glBindVertexArray(VAO); // on active le VAO
-  //glDrawElements(GL_TRIANGLES,  sizeof(indices), GL_UNSIGNED_INT, 0);// on appelle la fonction dessin pour hyperbole
-  //glDrawElements(GL_QUADS,  sizeof(indicestore), GL_UNSIGNED_INT, 0);//pour tore
-  glDrawElements(GL_QUADS,  sizeof(indicescube), GL_UNSIGNED_INT, 0);//et cube
+  glDrawElements(GL_QUADS,  sizeof(indicestore), GL_UNSIGNED_INT, 0);//pour tore 
+
+  glBindVertexArray(0);    // on desactive les VAO
+  glUseProgram(0);         // et le pg
+
+}
+
+void traceObjethyper()
+{
+ // Use  shader & MVP matrix   MVP = Projection * View * Model;
+ glUseProgram(programID);
+ ChoiceLocation = glGetUniformLocation(programID, "choice");
+
+//on envoie les données necessaires aux shaders */
+ glUniformMatrix4fv(MatrixIDMVP, 1, GL_FALSE, &MVP[0][0]);
+ glUniform1f(ChoiceLocation,choice);
+
+ glUniform3f(locCameraPosition,cameraPosition.x, cameraPosition.y, cameraPosition.z);
+
+
+//pour l'affichage
+	glBindVertexArray(VAO); // on active le VAO
+  glDrawElements(GL_QUADS,  MAXMERID*4 , GL_UNSIGNED_INT, BUFFER_OFFSET(0));// on appelle la fonction dessin 
+  glDrawElements(GL_TRIANGLES,  MAXMERID*3*2, GL_UNSIGNED_INT, BUFFER_OFFSET(MAXMERID*4));// 
 
   glBindVertexArray(0);    // on desactive les VAO
   glUseProgram(0);         // et le pg

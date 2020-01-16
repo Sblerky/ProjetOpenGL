@@ -17,12 +17,15 @@ out vec3 fragPosition;
 out vec3 newPosition;
 
 
+
+/***************************************COMPRESSION******************************************/
+
 void compressionx(vec3 vecteur,float borneinf, float bornesup)
 {
     float Rayon=bornesup-borneinf;
      if (vecteur.x>borneinf){
         if(vecteur.x<bornesup){
-           newPosition.x=1.-(vecteur.x-borneinf)/(2.*Rayon);
+           newPosition.x=1.-(vecteur.x-borneinf)/(0.2*Rayon);
          }
          else{
               newPosition.x= 1./2.*vecteur.x;
@@ -62,7 +65,7 @@ void compressiony(vec3 vecteur,float borneinf, float bornesup)
     float Rayon=bornesup-borneinf;
      if (vecteur.y>borneinf){
         if(vecteur.y<bornesup){
-           newPosition.y=1.-(vecteur.y-borneinf)/(2.*Rayon);
+           newPosition.y=1.-(vecteur.y-borneinf)/(0.2*Rayon);
          }
          else{
               newPosition.y= 1./2.*vecteur.y;
@@ -100,7 +103,7 @@ void compressionz(vec3 vecteur,float borneinf, float bornesup)
     float Rayon=bornesup-borneinf;
      if (vecteur.z>borneinf){
         if(vecteur.z<bornesup){
-           newPosition.z=1.-(vecteur.z-borneinf)/(2.*Rayon);
+           newPosition.z=1.-(vecteur.z-borneinf)/(0.2*Rayon);
          }
          else{
               newPosition.z= 1./2.*vecteur.z;
@@ -162,6 +165,10 @@ void compressionxtrem(vec3 vecteur, float Maxi)
     compressionxtremz(newPosition,Maxi);
 }
 
+
+
+/***************************************DECOMPRESSION******************************************/
+
 void decompressionxtremx (vec3 vecteur,float Max)
 {
     newPosition.x=Max*vecteur.x;
@@ -191,6 +198,8 @@ void decompressionxtrem(vec3 vecteur, float Maxi)
 }
 
 
+
+/***************************************ROTATION******************************************/
 
 void rotationdiffy2(vec3 vecteur,float anglerot)
 {
@@ -304,13 +313,19 @@ void rotationdiffz(vec3 vecteur, int borneinf,int bornesup,float anglerot){
 }
 
 
+
+
+
+/***************************************VORTEX******************************************/
+
 void vortexz(vec3 vecteur,float anglerot)
 {
     theta=anglerot*vecteur.z/8;
-    alpha=theta*exp(-1.*(vecteur.x*vecteur.x+vecteur.y*vecteur.y));
-    rot=mat3(cos(alpha),-sin(alpha),0.0,
-                    sin(alpha),cos(alpha),0.0,
-                    0.0,0.0,1.0
+    alpha=theta*exp(-1.*(vecteur.y*vecteur.y+vecteur.x*vecteur.x));
+    rot=mat3(
+        cos(alpha), -sin(alpha),    0.0,
+        sin(alpha), cos(alpha),     0.0,
+        0.0,        0.0,            1.0
                     );
     newPosition= (rot*vecteur);
 
@@ -319,11 +334,12 @@ void vortexz(vec3 vecteur,float anglerot)
 
 void vortexx(vec3 vecteur,float anglerot)
 {
-    theta=anglerot*vecteur.z/8;
-    alpha=theta*exp(-1.*(vecteur.x*vecteur.x+vecteur.y*vecteur.y));
-    rot=mat3(1.0,0.0,0.0,
-              0.0,cos(alpha),-sin (alpha),
-              0.0,sin(alpha),cos(alpha)
+    theta=anglerot*vecteur.x/8;
+    alpha=theta*exp(-1.*(vecteur.z*vecteur.z+vecteur.y*vecteur.y));
+    rot=mat3(
+        1.0,    0.0,        0.0,
+        0.0,    cos(alpha), -sin (alpha),
+        0.0,    sin(alpha), cos(alpha)
              );
     newPosition= (rot*vecteur);
 
@@ -331,13 +347,14 @@ void vortexx(vec3 vecteur,float anglerot)
 
 void vortexy(vec3 vecteur,float anglerot)
 {
-    alpha=anglerot*vecteur.y/8;
-    theta=alpha*exp(-1.*(vecteur.x*vecteur.x+vecteur.z*vecteur.z));
-    rot=mat3(cos(theta),0.0,sin(theta),
-                    0.0,1.0,0.0,
-                    -sin(theta),0.0,cos(theta)
+    theta=anglerot*vecteur.y/8;
+    alpha=theta*exp(-1.*(vecteur.x*vecteur.x+vecteur.z*vecteur.z));
+    rot=mat3(
+        cos(alpha), 0.0,    sin(alpha),
+        0.0,        1.0,    0.0,
+        -sin(alpha),0.0,    cos(alpha)
                     );
-    newPosition= rot*vecteur;
+    newPosition= (rot*vecteur);
 }
 
 
@@ -375,6 +392,12 @@ void torvexy(vec3 vecteur,float anglerot)
                     );
     newPosition= rot*vecteur;
 }
+
+
+
+
+
+/***************************************PLIAGE******************************************/
 
 void pliagex(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 {
@@ -432,15 +455,6 @@ void pliagex(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 }
 
 
-
-
-
-
-
-// ***************************************************************** //
-
-
-
 void pliagey(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 {
 
@@ -495,11 +509,6 @@ void pliagey(vec3 vecteur,int borneinf,int bornesup,float anglerot)
         newPosition=vecteur;
     }
 }
-
-
-
-// ***************************************************************** //
-
 
 
 void pliagez(vec3 vecteur,int borneinf,int bornesup,float anglerot)
@@ -560,30 +569,42 @@ void pliagez(vec3 vecteur,int borneinf,int bornesup,float anglerot)
 
 
 
+
+/***************************************MAIN******************************************/
+
 void main(){
 	
     if(choice==1){newPosition=position;}
-    if(choice==2){compressionx(position,0,5);}
+    if(choice==2){compressionx(position,-5,5);}
     if(choice==3){compressionx_yz(position,0,4);}
     if(choice==4){compressiony_xz(position,0,4);}
     if(choice==5){compressionz_xy(position,0,4);}
-    if(choice==6){compressiony(position,-3,4);}
-    if(choice==7){compressionz(position,0,4);}
+    if(choice==6){compressiony(position,-4,4);}
+    if(choice==7){compressionz(position,-5,4);}
     if(choice==8){rotationdiffy(position,-1,3,M_PI);}
     if(choice==9){rotationdiffx(position,-1,3,M_PI);}
     if(choice==10){rotationdiffy2(position,M_PI/2);}
-    if(choice==11){rotationdiffz2(position,M_PI/2);}
-    if(choice==12){rotationdiffx2(position,M_PI/2);}
-    if(choice==13){compressionxtrem(position,4);}
-    if(choice==14){vortexy(position,2*M_PI);}
-    if(choice==15){vortexz(position,2*M_PI);}
-    if(choice==16){torvexy(position,M_PI);}
-    if(choice==17){decompressionxtrem(position,4);}
-    if(choice==18){pliagex(position,-1,2,M_PI/4);}
-    if(choice==19){pliagey(position,-1,2,M_PI/4);}
-    if(choice==20){pliagez(position,-1,2,M_PI/4);}
-    if(choice==21){rotationdiffx(position,0,4,M_PI/3);}
-    if(choice==22){compressionx(position,-1,3);}
+    if(choice==11){rotationdiffx2(position,M_PI/2);}
+    if(choice==12){compressionxtrem(position,4);}
+    if(choice==13){vortexy(position,2*M_PI);}
+    if(choice==14){vortexz(position,2*M_PI);}
+    if(choice==15){torvexy(position,M_PI);}
+    if(choice==16){decompressionxtrem(position,4);}
+    if(choice==17){pliagex(position,-1,2,M_PI/4);}
+    if(choice==18){pliagey(position,-1,2,M_PI/4);}
+    if(choice==19){pliagez(position,-1,2,M_PI/4);}
+    if(choice==20){rotationdiffx(position,0,4,M_PI/3);}
+    if(choice==21){compressionx(position,-10,5);}
+    if(choice==22){decompressionxtremx(position,4);}
+    if(choice==23){decompressionxtremy(position,4);}
+    if(choice==24){decompressionxtremz(position,4);}
+    if(choice==25){compressionxtremx(position,4);}
+    if(choice==26){compressionxtremy(position,4);}
+    if(choice==27){compressionxtremz(position,4);}
+    if(choice==28){compressionx_yz(position,-4,4);}
+    if(choice==29){vortexx(position,2*M_PI);}
+    if(choice==30){torvexx(position,M_PI);}
+    if(choice==31){torvexz(position,M_PI);}
   
     gl_Position = MVP*vec4(newPosition, 1.0);
 
